@@ -59,11 +59,11 @@ class FileStorage:
     def delete(self, obj=None):
         """ deletes an obj if passed from file """
         if obj:
-            try:
-                temp = {}
-                with open(FileStorage.__file_path, 'r') as f:
-                    temp = json.load(f)
-                if obj in temp.items():
-                    temp.remove(obj)
-            except FileNotFoundError:
-                pass
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            FileStorage.__objects.pop(key, None)
+            self.save()
+
+    def clear(self):
+        """ empties file """
+        FileStorage.__objects.clear()
+        self.save()

@@ -182,6 +182,10 @@ class HBNBCommand(cmd.Cmd):
         print("Shows an individual instance of a class")
         print("[Usage]: show <className> <objectId>\n")
 
+    def do_wipe(self, arg):
+        """ wipes storage file clean """
+        storage.clear()
+
     def do_destroy(self, args):
         """ Destroys a specified object """
         new = args.partition(" ")
@@ -215,7 +219,7 @@ class HBNBCommand(cmd.Cmd):
         print("Destroys an individual instance of a class")
         print("[Usage]: destroy <className> <objectId>\n")
 
-    def do_all(self, cls=None):
+    def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
         print_list = []
 
