@@ -24,7 +24,7 @@ if models.storage_type == 'db':
                                  primary_key=True))
 
 
-class Place(BaseModel):
+class Place(BaseModel, Base):
     """ A place to stay """
     if models.storage_type == "db":
         __tablename__ = "places"
