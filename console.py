@@ -135,12 +135,15 @@ class HBNBCommand(cmd.Cmd):
             if value[0] == '"' and value[-1] == '"':
                 value = value[1:-1].replace('\\"', '"')
             # convert to int or float where necessary
-            if '.' in value:
-                param_to_dict[key] = float(value)
-            elif value.isdigit():
-                param_to_dict[key] = int(value)
-            else:
-                param_to_dict[key] = value
+            try:
+                if value.isdigit() and '.' in value:
+                    param_to_dict[key] = float(value)
+                elif value.isdigit():
+                    param_to_dict[key] = int(value)
+                else:
+                    param_to_dict[key] = value
+            except ValueError:
+                pass
         new_instance = HBNBCommand.classes[clsname](**param_to_dict)
         print(new_instance.id)
         new_instance.save()
