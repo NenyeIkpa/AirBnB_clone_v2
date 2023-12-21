@@ -1,1 +1,1 @@
-{}
+{"State.4bf08c8b-d9fd-4c55-957b-756f3af86e94": {"id": "4bf08c8b-d9fd-4c55-957b-756f3af86e94", "created_at": "2023-12-21T15:08:40.692540", "name": "Nevada", "__class__": "State"}, "City.c6103425-a9a8-41e5-889e-265a9a82a644": {"id": "c6103425-a9a8-41e5-889e-265a9a82a644", "created_at": "2023-12-21T15:08:40.694976", "name": "New_York", "__class__": "City"}, "City.6cb8707e-566f-4cef-9eed-124cb3109387": {"id": "6cb8707e-566f-4cef-9eed-124cb3109387", "created_at": "2023-12-21T15:08:40.697170", "__class__": "City"}}
