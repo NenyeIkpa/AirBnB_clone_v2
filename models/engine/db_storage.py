@@ -6,6 +6,7 @@ from models.base_model import Base
 from models.base_model import BaseModel
 from models.state import State
 from models.city import City
+from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from models.user import User
@@ -38,8 +39,8 @@ class DBStorage:
             else return data specific to cls value passed
         """
         if not cls:
-            data = self.__session.query(State).all()
-            data.extend(self.__session.query(City).all())
+            data = self.__session.query(City).all()
+            data.extend(self.__session.query(State).all())
             data.extend(self.__session.query(Place).all())
             data.extend(self.__session.query(Review).all())
             data.extend(self.__session.query(Amenity).all())

@@ -31,34 +31,21 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        if not kwargs:
-            self.id = str(uuid.uuid4())
-            self.created_at = self.updated_at = datetime.now()
-        else:
+        self.id = str(uuid.uuid4())
+        self.created_at = datetime.utcnow()
+        if kwargs:
+            # date_format = "%Y-%m-%dT%H:%M:%S.%f"
             for key, value in kwargs.items():
-                if key == 'updated_at':
-                    self.updated_at = datetime.\
-                            strptime(
-                                    kwargs['updated_at'],
-                                    '%Y-%m-%dT%H:%M:%S.%f'
-                                    )
-                if key == 'created_at':
-                    self.created_at = datetime\
-                            .strptime(
-                                    kwargs['created_at'],
-                                    '%Y-%m-%dT%H:%M:%S.%f'
-                                    )
-                if kwargs.get("id", None) is None:
-                    self.id = str(uuid.uuid4())
-                if key != '__class__':
+                if key == "__class__":
+                    continue
+                else:
                     setattr(self, key, value)
 
     def __str__(self):
         """Returns a string representation of the instance"""
-        return "[{}] ({}) {}".format(
-                self.__class__.__name__, self.id, self.__dict__)
-        """ cls = (str(type(self)).split('.')[-1]).split('\'')[0]
-        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__) """
+        dt = self.__dict__.copy()
+        dt.pop("_sa_instance_state", None)
+        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, dt)
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
