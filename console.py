@@ -3,7 +3,7 @@
 import cmd
 import sys
 from models.base_model import BaseModel
-from models.__init__ import storage
+from models import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -132,7 +132,8 @@ class HBNBCommand(cmd.Cmd):
             # replace underscores with spaces
             value = value.replace('_', ' ')
             # remove quotes from the value
-            value = value[1:-1].replace('\\"', '"')
+            if value[0] == '"' and value[-1] == '"':
+                value = value[1:-1].replace('\\"', '"')
             # convert to int or float where necessary
             if '.' in value:
                 param_to_dict[key] = float(value)
@@ -141,8 +142,8 @@ class HBNBCommand(cmd.Cmd):
             else:
                 param_to_dict[key] = value
         new_instance = HBNBCommand.classes[clsname](**param_to_dict)
-        storage.save()
         print(new_instance.id)
+        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -173,7 +174,7 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            print(storage._FileStorage__objects[key])
+            print(storage.all()[key])
         except KeyError:
             print("** no instance found **")
 
@@ -220,21 +221,21 @@ class HBNBCommand(cmd.Cmd):
         print("[Usage]: destroy <className> <objectId>\n")
 
     def do_all(self, args):
-        """ Shows all objects, or all objects of a class"""
+        """ prints all objects, or all objects of a class"""
         print_list = []
-
+        objs = storage.all()
         if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
+            clsname = args.split(' ')[0]  # remove possible trailing args
+            if clsname not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
+            for k, v in objs.items():
+                cls = k.split('.')[0]
+                if cls == clsname:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in objs.items():
                 print_list.append(str(v))
-
         print(print_list)
 
     def help_all(self):

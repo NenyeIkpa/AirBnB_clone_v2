@@ -31,6 +31,7 @@ class DBStorage:
         # drop all tables if the environment variable HBNB_ENV is equal to test
         if getenv("HBNB_ENV") == "test":
             Base.metadata.drop_all(self.__engine)
+        self.reload()
 
     def all(self, cls=None):
         """ query on current db session to return all data if cls is not passed
@@ -39,7 +40,7 @@ class DBStorage:
         if not cls:
             data = self.__session.query(State).all()
             data.extend(self.__session.query(City).all())
-            data.extend(self._session.query(Place).all())
+            data.extend(self.__session.query(Place).all())
             data.extend(self.__session.query(Review).all())
             data.extend(self.__session.query(Amenity).all())
             data.extend(self.__session.query(User).all())
@@ -70,7 +71,7 @@ class DBStorage:
                 bind=self.__engine,
                 expire_on_commit=False)
         Session = scoped_session(session)
-        self.__sessiom = Session()
+        self.__session = Session()
 
     def close(self):
         """ close the active SQLAlchemy session """
