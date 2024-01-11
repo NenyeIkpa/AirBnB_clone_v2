@@ -4,19 +4,34 @@
     to web servers using do_deploy function
 """
 
-from fabric.api import env, put, run, local
+from fabric.api import env, put, run, local, runs_once
 from datetime import datetime
-import os
+from os.path import exists
 
 env.hosts = ['100.25.21.246', '3.85.41.202']
 env.user = 'ubuntu'
+
+
+@runs_once
+def do_pack():
+    """
+    Generates a .tgz archive from the contents of the web_static folder
+    """
+    try:
+        local("mkdir -p versions")
+        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        file_path = "versions/web_static_{}.tgz".format(current_time)
+        local("tar -cvzf {} web_static".format(file_path))
+        return file_path
+    except Exception as e:
+        return None
 
 
 def do_deploy(archive_path):
     """
     Distributes an archive to web servers
     """
-    if not os.path.exists(archive_path):
+    if not exists(archive_path):
         return False
 
     try:
@@ -31,12 +46,6 @@ def do_deploy(archive_path):
         # Uncompress the archive
         run("mkdir -p {}".format(remote_rel_path))
         run("tar -xzf {} -C {}".format(remote_tmp_path, remote_rel_path))
-
-        # Move contents of web_static folder
-        run("mv {}web_static/* {}".format(remote_rel_path, remote_rel_path))
-
-        # Remove the web_static folder
-        run("rm -rf {}web_static".format(remote_rel_path))
 
         # Delete the archive from the server
         run("rm {}".format(remote_tmp_path))
