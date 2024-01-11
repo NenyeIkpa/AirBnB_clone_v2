@@ -1,15 +1,32 @@
 #!/usr/bin/python3
 """
-    Fabric script that distributes an archive
-    to web servers using do_deploy function
+    Fabric script that creates and distributes an archive to webservers,
+    using the function deploy
 """
 
-from fabric.api import env, put, run, local
+
+from fabric.api import env, run, local, put, runs_once
 from datetime import datetime
-import os
+from os.path import exists
 
 env.hosts = ['100.25.21.246', '3.85.41.202']
 env.user = 'ubuntu'
+env.key_filename = '/home/vagrant/.ssh/authorized_keys'
+
+
+@runs_once
+def do_pack():
+    """
+    Generates a .tgz archive from the contents of the web_static folder
+    """
+    try:
+        local("mkdir -p versions")
+        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        file_path = "versions/web_static_{}.tgz".format(current_time)
+        local("tar -cvzf {} web_static".format(file_path))
+        return file_path
+    except Exception as e:
+        return None
 
 
 def do_deploy(archive_path):
@@ -33,7 +50,7 @@ def do_deploy(archive_path):
         run("tar -xzf {} -C {}".format(remote_tmp_path, remote_rel_path))
 
         # Move contents of web_static folder
-        run("mv {}web_static/* {}".format(remote_rel_path, remote_rel_path))
+        run("mv {}/web_static/* {}".format(remote_rel_path, remote_rel_path))
 
         # Remove the web_static folder
         run("rm -rf {}web_static".format(remote_rel_path))
@@ -53,3 +70,14 @@ def do_deploy(archive_path):
     except Exception as e:
         print("Deployment failed: {}".format(str(e)))
         return False
+
+
+def deploy():
+    """
+    Deploy the web_static content to web servers
+    """
+    archive_path = do_pack()
+    if not archive_path:
+        return False
+
+    return do_deploy(archive_path)
