@@ -19,6 +19,9 @@ def do_deploy(archive_path):
     if not exists(archive_path):
         return False
 
+    if not exists(archive_path):
+        return False
+
     try:
         archive_name = archive_path.split('/')[-1]
         archive_no_ext = archive_name.split('.')[0]
@@ -31,12 +34,6 @@ def do_deploy(archive_path):
         # Uncompress the archive
         run("mkdir -p {}".format(remote_rel_path))
         run("tar -xzf {} -C {}".format(remote_tmp_path, remote_rel_path))
-
-        # Move contents of web_static folder
-        run("mv {}/web_static/* {}".format(remote_rel_path, remote_rel_path))
-
-        # Remove the web_static folder
-        run("rm -rf {}web_static".format(remote_rel_path))
 
         # Delete the archive from the server
         run("rm {}".format(remote_tmp_path))
