@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
     App start point with flask
 """
